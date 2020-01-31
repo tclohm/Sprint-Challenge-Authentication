@@ -1,21 +1,14 @@
 const request = require('supertest');
 const server = require('../api/server.js');
+const db = require('../database/dbConfig.js');
 
-
-let token;
-
-beforeAll((done) => {
-	const user = { username: 'Reggie', password: 'fortnight' };
-	request(server)
-		.post('/api/auth/login')
-		.send(user)
-		.end((err, res) => {
-			token = res.body.token;
-			done();
-		})
-})
 
 describe('jokes-router', function () {
+
+	beforeEach(async function () {
+			await db('users').truncate();
+	})
+
 	describe('test environment', function () {
 		it('should be using test env', function () {
 			expect(process.env.DB_ENV).toBe('testing');
@@ -32,33 +25,21 @@ describe('jokes-router', function () {
 	})
 
 	describe('get jokes', function () {
-		// it('register', function () {
-		// 	const user = { username: 'Reggie', password: 'fortnight' }
-		// 	return request(server)
-		// 		.post('/api/auth/register')
-		// 		.send(user)
-		// 		.then(res => {
-		// 			expect(res.status).toBe(201)
-		// 		})
-		// })
 
-		// it('login', function () {
-		// 	const user = { username: 'Reggie', password: 'fortnight' }
-		// 	return request(server)
-		// 		.post('/api/auth/login')
-		// 		.send(user)
-		// 		.then(res => {
-		// 			token = res.body.token;
-		// 			expect(res.body.token)
-		// 		})
-		// })
-
-		it('200 on jokes', function () {
-			return request(server)
-				.get('/api/jokes')
-				.set('authorization', token)
-				.then(res => {
-					expect(res.status).toBe(200)
+		it('200 on jokes', async function () {
+			const user = { username: 'Bill', password: 'fortnight' }
+			await request(server) // post new user, post login, .then , async await(user )
+				.post('/api/auth/register').send(user)
+				.then(async () => {
+					await request(server).post('/api/auth/login').send(user)
+						.then(async (res) => {
+							token = res.body.token
+							await request(server).get('/api/jokes')
+							.set('authorization', token)
+							.then(res => {
+								expect(res.status).toBe(200);
+							})
+						})
 				})
 		})
 	})

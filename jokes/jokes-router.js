@@ -8,8 +8,9 @@ router.get('/', (req, res) => {
   };
 
   axios
-    .get('https://icanhazdadjoke.com/search', requestOptions)
+    .get('https://icanhazdadjoke.com/search')
     .then(response => {
+      console.log(response.data.results);
       res.status(200).json(response.data.results);
     })
     .catch(err => {

@@ -14,10 +14,11 @@ module.exports = (req, res, next) => {
 				res.status(401).json({ message: "Invalid token" });
 			} else {
 				// something here
-				req.user = { id: decodedToken.id };
+				//req.user = decodedToken.user
 				next();
 			}
 		})
+	} else {
+		res.status(401).json({ you: 'shall not pass!' });
 	}
-	res.status(401).json({ you: 'shall not pass!' });
 };

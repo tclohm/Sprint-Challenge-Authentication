@@ -1,8 +1,13 @@
 const request = require('supertest');
 const server = require('../api/server.js');
-const db = request('../database/dbConfig.js');
+const db = require('../database/dbConfig.js');
 
 describe('auth-router', function () {
+
+	beforeEach(async function () {
+			await db('users').truncate();
+	})
+
 	describe('test environment', function () {
 		it('should be using test env', function () {
 			expect(process.env.DB_ENV).toBe('testing');
@@ -10,17 +15,16 @@ describe('auth-router', function () {
 	})
 
 	describe('registration', function () {
-		it('should return 201 when posting', async function () {
+
+		it('should return 201 when posting', function () {
 			const user = { username: 'Shawn', password: 'fortnight'}
 			return request(server).post('/api/auth/register').send(user)
 				.then(res => {
 					expect(res.status).toBe(201)
 				})
 		})
-	})
 
-	describe('registration', function () {
-		it('should return user', async function () {
+		it('should return user', function () {
 			const user = { username: 'Reggie', password: 'fortnight'}
 			return request(server).post('/api/auth/register').send(user)
 				.then(res => {
@@ -29,23 +33,27 @@ describe('auth-router', function () {
 		})
 	})
 
-
 	describe('login', function () {
+
 		it('should return a token', function () {
 			const user = { username: 'Shawn', password: 'fortnight'}
-			return request(server).post('/api/auth/login').send(user)
+			return request(server).post('/api/auth/register').send(user)
 				.then(res => {
-					expect(res.body.token).toBe(`${res.body.token}`)
+					return request(server).post('/api/auth/login').send(user)
+						.then(res => {
+							expect(res.body.token).toBe(`${res.body.token}`)
+					})
 				})
 		})
-	})
 
-	describe('login', function () {
 		it('should return a 201', function () {
-			const user = { username: 'Reggie', password: 'fortnight' }
-			return request(server).post('/api/auth/login').send(user)
+			const user = { username: 'Reggie', password: 'fortnight'}
+			return request(server).post('/api/auth/register').send(user)
 				.then(res => {
-					expect(res.status).toBe(200)
+					return request(server).post('/api/auth/login').send(user)
+						.then(res => {
+							expect(res.body.token).toBe(`${res.body.token}`)
+					})
 				})
 		})
 	})
