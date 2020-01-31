@@ -40,11 +40,19 @@ Demonstrate your understanding of this week's concepts by answering the followin
 
 - [ ] What is the purpose of using _sessions_?
 
+Sessions allow web applications and servers have some saved information on your users and give them a customized experience. We can know a user has been looking at and we can serve them. But from what Lambda has taught us it is used for persisting authentication information across requests.
+
 - [ ] What does bcrypt do to help us store passwords in a secure manner.
+
+The third party library will salt and hash our passwords. Salting is random data that is additionally added onto our passwords. It uses a one-way function that hashes the data, our password + the salt.
 
 - [ ] What does bcrypt do to slow down attackers?
 
+Bcrypt slows down attackers because salts don't have to be memorized, the size of the hash table required to for a successful hash attack is enormous. It can take centuries for attackers to get users passwords.
+
 - [ ] What are the three parts of the JSON Web Token?
+
+The header (contains the algorithm, alg, with the token type, typ), the payload (includes claims, which are permission, and other data we would store in the token, like a user id, and we store other custom properties), the signature (string base64 encoding the header and payload together, signed with a secret)
 
 ## Minimum Viable Product
 
