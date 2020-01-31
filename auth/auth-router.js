@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Users = require('../users/users-models.js');
+const Users = require('../users/users-model.js');
 
 const { jwtSecret } = require('../config/secrets.js');
 
@@ -15,10 +15,11 @@ router.post('/register', (req, res) => {
   		} else {
   			user.password = hash;
   			Users.add(user)
-  				.then(user => {
-  					res.status(201).json(user);
+  				.then(save => {
+  					res.status(201).json(save);
   				})
   				.catch(err => {
+  					console.log(err);
   					res.status(500).json(err);
   				});
   		}
@@ -42,6 +43,7 @@ router.post('/login', (req, res) => {
   				}
   			})
   			.catch(err => {
+  				console.log(err)
   				res.status(500).json({ message: `${err}`});
   			})
   		} else {
